@@ -5,7 +5,11 @@ Get the free API key from preference > security
 
 Using Whatsapp to send receipts, invoice or any expenses to OpenClaw
 
-Python to do OCR of the image or pdf
+Python to use pdfplumber to extract text if is a text pdf
+
+Python to use pdf2image to convert pdf to image it is not a text pdf
+
+Python to use tesseract-ocr to convert image or pdf-extract
 
 Python to check if there is existing chart of account json, if no fetch it
 
