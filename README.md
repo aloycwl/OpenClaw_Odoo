@@ -1,22 +1,50 @@
-# OpenClaw_Odoo
-Register a free Odoo account and select Accounting
+# OpenClaw Odoo Integration
 
-Get the free API key from preference > security
+OpenClaw Odoo Integration automates expense bookkeeping by extracting data from receipts/invoices and posting journal entries to Odoo.
 
-Using Whatsapp to send receipts, invoice or any expenses to OpenClaw
+## Goal
 
-Python to use pdfplumber to extract text if is a text pdf
+Turn documents sent over WhatsApp (receipts, invoices, and other expenses) into correctly categorized double-entry accounting records in Odoo.
 
-Python to use pdf2image to convert pdf to image it is not a text pdf
+## High-Level Workflow
 
-Python to use tesseract-ocr to convert image or pdf-extract
+1. **Set up Odoo**
+   - Create a free Odoo account.
+   - Enable and use the **Accounting** module.
+2. **Generate API access**
+   - In Odoo, go to **Preferences → Security** and generate an API key.
+3. **Receive expense documents**
+   - Users send receipts/invoices/expense documents through WhatsApp to OpenClaw.
+4. **Extract document content**
+   - If the PDF contains embedded text, use `pdfplumber`.
+   - If the PDF is image-based, convert pages to images with `pdf2image`.
+   - Run OCR with `tesseract-ocr` to extract text from images/scans.
+5. **Load accounting context**
+   - Check whether a Chart of Accounts JSON is already available.
+   - If missing, fetch it.
+   - Allow manual chart-of-accounts refresh when data is outdated.
+6. **Classify accounting treatment with AI**
+   - Send extracted document content plus chart-of-accounts context to an agent.
+   - Agent decides:
+     - Account classification
+     - Required double-entry postings
+7. **Post to Odoo**
+   - Use the generated API key to insert the finalized accounting records into Odoo.
 
-Python to check if there is existing chart of account json, if no fetch it
+## Core Components
 
-Python has a function that can manually update the chart of account if outdated
+- **Ingestion**: WhatsApp document intake
+- **Extraction**: `pdfplumber`, `pdf2image`, `tesseract-ocr`
+- **Accounting context**: Chart of Accounts JSON loader/updater
+- **AI reasoning**: Account mapping + double-entry decisioning
+- **Execution**: Odoo API insertion
 
-Python to prompt the receipt, invoice or other expense content and the chart of account into another agent
+## Suggested Next Improvements
 
-The prompt is to identify whether which chart of acccount and double entry it should do
+- Add confidence scoring for OCR and classification outputs.
+- Add human-in-the-loop approval for low-confidence postings.
+- Add retry/error queues for failed API insertions.
+- Add audit logs for every accounting decision and posted entry.
+## OpenClaw Skill
 
-Using the API key python will do the necessary insertion
+For agent-oriented execution instructions, see [`SKILL.md`](SKILL.md).
