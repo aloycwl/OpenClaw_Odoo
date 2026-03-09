@@ -37,6 +37,11 @@ def _extract_pdf_text(path: Path) -> str:
     except Exception:
         # Any PDF text extraction failure falls back to full-page OCR in extract_text().
         return ""
+    pages: list[str] = []
+    with pdfplumber.open(str(path)) as pdf:
+        for page in pdf.pages:
+            pages.append(page.extract_text() or "")
+    return "\n".join(pages)
 
 
 def _ocr_pdf(path: Path) -> str:

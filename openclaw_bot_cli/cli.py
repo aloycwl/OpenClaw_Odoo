@@ -23,6 +23,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("document", type=Path, help="Path to receipt/invoice file (.pdf, image, .txt)")
     parser.add_argument("--coa", type=Path, required=True, help="Path to chart of accounts JSON")
     parser.add_argument("--api-key", default="", help="Odoo API key (or use ODOO_API_KEY env var; required with --allow-post)")
+    parser.add_argument("--api-key", default="", help="Odoo API key (required only with --allow-post)")
     parser.add_argument("--default-currency", default="USD", help="Fallback currency code")
     parser.add_argument("--refresh-coa-cmd", default="", help="Shell command to refresh COA JSON")
     parser.add_argument("--output", type=Path, default=Path("accounting_result.json"), help="Result output file")
@@ -53,6 +54,13 @@ def main() -> int:
         validate_result(result, coa)
 
         post_response = post_to_odoo(result, api_key=api_key, dry_run=not args.allow_post)
+        coa = load_chart_of_accounts(args.coa)
+        raw_text, extraction_mode = extract_text(args.document)
+        result = classify_accounting(raw_text, coa, default_currency=args.default_currency)
+        result.notes = f"{result.notes}; extraction_mode={extraction_mode}"
+        validate_result(result, coa)
+
+        post_response = post_to_odoo(result, api_key=args.api_key, dry_run=not args.allow_post)
         output_payload = result.as_json()
         output_payload["post_response"] = post_response
         args.output.write_text(json.dumps(output_payload, indent=2), encoding="utf-8")
