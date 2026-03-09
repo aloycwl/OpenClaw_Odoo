@@ -7,6 +7,7 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
+from .ai_automation import classify_accounting_with_ai
 from .models import AccountingResult, Entry
 
 
@@ -58,6 +59,12 @@ def classify_accounting(raw_text: str, coa: list[dict[str, Any]], *, default_cur
         raw_text=raw_text,
     )
 
+
+
+
+def classify_accounting_automated(raw_text: str, coa: list[dict[str, Any]], *, default_currency: str) -> AccountingResult:
+    """AI-first classification that prompts a chat model with expense text and chart of accounts."""
+    return classify_accounting_with_ai(raw_text, coa, default_currency=default_currency)
 
 def validate_result(result: AccountingResult, coa: list[dict[str, Any]]) -> None:
     debit = sum(item.debit for item in result.entries)
