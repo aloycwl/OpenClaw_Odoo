@@ -48,3 +48,47 @@ Turn documents sent over WhatsApp (receipts, invoices, and other expenses) into 
 ## OpenClaw Skill
 
 For agent-oriented execution instructions, see [`SKILL.md`](SKILL.md).
+
+## CLI Script for Bot Integration
+
+Use the `openclaw_bot_cli/` package as a callable command-line entrypoint for your bot.
+
+Setup env config first:
+
+```bash
+cp .env.sample .env
+# then edit .env with your real keys
+```
+
+Example:
+
+```bash
+python -m openclaw_bot_cli ./sample_receipt.txt --coa ./chart_of_accounts.json --output ./result.json
+```
+
+Options:
+- `--coa`: chart of accounts JSON file (required)
+- `--refresh-coa-cmd`: optional shell command to refresh chart-of-accounts JSON before processing
+- `--allow-post`: enable posting step (kept as a safe stub until Odoo API call is wired)
+- `--api-key`: Odoo API key (used with `--allow-post`)
+- `ODOO_API_KEY`: API key loaded from `.env` (or shell env)
+- `--use-ai`: use AI-based account mapping with `AI_CHAT_URL`, `AI_MODEL`, `AI_SECRET` from `.env`
+
+API key input examples:
+
+```bash
+python -m openclaw_bot_cli ./sample_receipt.txt --coa ./chart_of_accounts.json --allow-post --api-key "your_api_key"
+```
+
+```bash
+export ODOO_API_KEY="your_api_key"
+python -m openclaw_bot_cli ./sample_receipt.txt --coa ./chart_of_accounts.json --allow-post
+```
+
+AI automation example:
+
+```bash
+python -m openclaw_bot_cli ./sample_receipt.txt --coa ./chart_of_accounts.json --use-ai --output ./result.json
+```
+
+The script outputs the accounting JSON payload to stdout and to the `--output` file.
